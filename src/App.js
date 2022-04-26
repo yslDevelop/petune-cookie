@@ -14,8 +14,11 @@ import {
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Player } from "video-react";
+import "react-dropzone-uploader/dist/styles.css";
 
 function App({ db, storage }) {
+  const [comment, setComment] = useState("");
+  const [openCommentForm, setopenCommentForm] = useState(false);
   const [hideTodayButton, sethideTodayButton] = useState(false);
   const [isAdding, setisAdding] = useState(false);
   const [uploader, setuploader] = useState("");
@@ -31,26 +34,40 @@ function App({ db, storage }) {
 내 어깨를 봐~ 아 탈골 됐잖아~
 아 탈골 탈골 탈골탈골타골~`,
   ]);
+  const [loadingTextListSecond, setloadingTextListSecond] = useState([
+    `업로드 중....💚.....💚...`,
+    `언제까지 어깨 춤을 추게 할거야~
+내 어깨를 봐~ 아 탈골 됐잖아~
+아 탈골 탈골 탈골탈골타골~`,
+  ]);
   Modal.setAppElement("#root");
 
   useEffect(() => {
-    if (isLoading) {
-      // setloadingTextListIndex(0);
+    if (isLoading || isAdding) {
+      setTimeout(() => {
+        setloadingIndexVertical(1);
+      }, 3000);
       changeloadingTextIndex();
     }
-  }, [isLoading, changeloadingTextIndex]);
+  }, [isAdding, isLoading, changeloadingTextIndex]);
 
   function changeloadingTextIndex() {
     setTimeout(() => {
       if (
+        isLoading &&
+        loadingTextListIndex < loadingTextList[loadingIndexVertical].length - 1
+      ) {
+        setloadingTextListIndex(loadingTextListIndex + 1);
+      } else if (
+        isAdding &&
         loadingTextListIndex <
-        loadingTextList[loadingIndexVertical].length - 1
+          loadingTextListSecond[loadingIndexVertical].length - 1
       ) {
         setloadingTextListIndex(loadingTextListIndex + 1);
       } else {
         setloadingTextListIndex(1);
       }
-    }, 50);
+    }, 70);
   }
 
   async function loadRandomFortune() {
@@ -105,8 +122,7 @@ function App({ db, storage }) {
               </p>
               <button
                 onClick={() => {
-                  sethideTodayButton(false);
-                  setloadingIndexVertical(0);
+                  window.location.reload();
                 }}
               >
                 돌아가기
@@ -152,14 +168,15 @@ function App({ db, storage }) {
       .catch((e) => console.log(e));
   }
 
-  const fileParams = ({ meta }) => {
+  const getUploadParams = ({ meta }) => {
     return { url: "https://httpbin.org/post" };
   };
-  const onFileChange = ({ meta, file }, status) => {
-    // console.log(status, file);
-  };
-  const onSubmit = (files, allFiles) => {
-    allFiles.forEach((f) => f.remove());
+  const handleChangeStatus = ({ meta, file }, status) => {
+    if (status === "done") {
+      console.log("?");
+      setFiles([file]);
+    }
+    console.log(status, meta, file);
   };
   const getFilesFromEvent = (e) => {
     return new Promise((resolve) => {
@@ -171,6 +188,7 @@ function App({ db, storage }) {
   const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
     return (
       <button
+        style={{ width: "100%", height: "100%" }}
         onClick={() => {
           document.getElementById("inputFile").click();
           console.log("2125641513");
@@ -199,10 +217,9 @@ function App({ db, storage }) {
     return (
       <img
         style={{
-          width: "90%",
-          marginLeft: "5%",
-          borderRadius: 15,
-          borderWidth: 10,
+          width: "100%",
+          overflow: "hidden",
+          borderRadius: 5,
         }}
         src={props.meta.previewUrl}
       />
@@ -229,10 +246,11 @@ function App({ db, storage }) {
               isOpen={isLoading}
               style={{
                 overlay: {
-                  position: "fixed",
                   width: "100%",
-                  top: 0,
-                  left: 0,
+                  maxWidth: 500,
+                  maxHeight: 1000,
+                  transform: "translate(-50%)",
+                  left: "50%",
                   right: 0,
                   bottom: 0,
                   borderRadius: 15,
@@ -248,7 +266,7 @@ function App({ db, storage }) {
                 },
               }}
             >
-              <video
+              {/* <video
                 style={{ borderRadius: 15 }}
                 width={"100%"}
                 height={"100%"}
@@ -256,7 +274,18 @@ function App({ db, storage }) {
                 autoPlay={true}
               >
                 <source src="loading.mp4" type="video/mp4" />
-              </video>
+              </video> */}
+              <img
+                style={{
+                  width: "65%",
+                  height: "65%",
+                  maxWidth: 700,
+                  maxHeight: 700,
+                  borderRadius: 10,
+                  overflow: "hidden",
+                }}
+                src={"./images/pepe_loading.gif"}
+              />
               <p style={{ fontSize: 30, fontWeight: "bold" }}>
                 {loadingTextList[loadingIndexVertical].slice(
                   0,
@@ -266,15 +295,45 @@ function App({ db, storage }) {
             </Modal>
           </>
         ) : (
-          <button
-            className="mainButton"
-            disabled={hideTodayButton}
-            onClick={() => {
-              loadRandomFortune();
-            }}
-          >
-            오늘의 페페는?
-          </button>
+          <>
+            <button
+              className="mainButton"
+              disabled={hideTodayButton}
+              onClick={() => {
+                loadRandomFortune();
+              }}
+            >
+              오늘의 페페는?
+            </button>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+                display: "none" /** */,
+              }}
+            >
+              <button
+                className="mainButton"
+                disabled={hideTodayButton}
+                onClick={() => {
+                  setopenCommentForm(true);
+                }}
+              >
+                방명록 쓰기
+              </button>
+              <button
+                className="mainButton"
+                disabled={hideTodayButton}
+                onClick={() => {
+                  setopenCommentForm(true);
+                }}
+              >
+                방명록 보기
+              </button>
+            </div>
+          </>
         )}
       </div>
       <Modal
@@ -286,8 +345,11 @@ function App({ db, storage }) {
           overlay: {
             position: "fixed",
             width: "100%",
-            top: 0,
-            left: 0,
+            maxWidth: 500,
+            maxHeight: 1000,
+            transform: "translate(-50%)",
+            left: "50%",
+
             right: 0,
             bottom: 0,
             // backgroundColor: "beige",
@@ -306,7 +368,7 @@ function App({ db, storage }) {
           <div>
             <img
               style={{
-                width: "65%",
+                width: "100%",
                 height: "65%",
                 maxWidth: 700,
                 maxHeight: 700,
@@ -317,7 +379,7 @@ function App({ db, storage }) {
             />
 
             <p style={{ fontSize: 30, fontWeight: "bold" }}>
-              {loadingTextList[loadingIndexVertical].slice(
+              {loadingTextListSecond[loadingIndexVertical].slice(
                 0,
                 loadingTextListIndex
               )}
@@ -340,28 +402,13 @@ function App({ db, storage }) {
               onChange={(e) => setuploader(e.target.value)}
             />
             <Dropzone
-              onSubmit={onSubmit}
-              onChangeStatus={onFileChange}
-              InputComponent={selectFileInput}
-              getUploadParams={fileParams}
-              getFilesFromEvent={getFilesFromEvent}
-              SubmitButtonComponent={null}
+              getUploadParams={getUploadParams}
+              onChangeStatus={handleChangeStatus}
               PreviewComponent={previewImg}
               accept="image/*"
               maxFiles={1}
-              styles={{
-                dropzone: {
-                  width: "100%",
-                  flex: 1,
-                  display: "flex",
-                  textAlign: "center",
-                },
-                preview: {
-                  display: "flex",
-                  alignItems: "center",
-                },
-              }}
             />
+
             <div
               style={{
                 marginTop: 20,
@@ -410,6 +457,48 @@ function App({ db, storage }) {
             </div>
           </>
         )}
+      </Modal>
+
+      <Modal
+        isOpen={openCommentForm}
+        onRequestClose={() => {
+          setopenCommentForm(false);
+        }}
+      >
+        <input
+          style={{
+            width: "100%",
+            maxWidth: 500,
+            transform: "translate(-50%)",
+            left: "50%",
+            padding: 10,
+            resize: "none",
+            borderRadius: 10,
+            borderWidth: 1,
+            marginBottom: 10,
+          }}
+          type="text"
+          placeholder="작성자 이름"
+          value={uploader}
+          onChange={(e) => setuploader(e.target.value)}
+        />
+        <textarea
+          style={{
+            width: "80%",
+            padding: 10,
+            resize: "none",
+            borderRadius: 10,
+          }}
+          placeholder="운세를 적어주세요"
+          cols="40"
+          rows="5"
+          onChange={(e) => {
+            setComment(e.target.value);
+          }}
+          value={comment}
+        />
+        <button onClick={() => setopenCommentForm(false)}>저장</button>
+        <button onClick={() => setopenCommentForm(false)}>닫기</button>
       </Modal>
     </div>
   );
