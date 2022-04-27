@@ -26,6 +26,8 @@ function App({ db, storage }) {
   const [fortune, setfortune] = useState("");
   const [content, setcontent] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [fadeOutSuccess, setfadeOutSuccess] = useState(false);
+  const [loadingModalClassName, setloadingModalClassName] = useState("");
   const [loadingIndexVertical, setloadingIndexVertical] = useState(0);
   const [loadingTextListIndex, setloadingTextListIndex] = useState(1);
   const [loadingTextList, setloadingTextList] = useState([
@@ -35,11 +37,13 @@ function App({ db, storage }) {
 아 탈골 탈골 탈골탈골타골~`,
   ]);
   const [loadingTextListSecond, setloadingTextListSecond] = useState([
-    `업로드 중....💚.....💚...`,
+    `업로드 중....💚.....💚.....
+조금만 기다려줘잉💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚`,
     `언제까지 어깨 춤을 추게 할거야~
 내 어깨를 봐~ 아 탈골 됐잖아~
 아 탈골 탈골 탈골탈골타골~`,
   ]);
+  const [isRibbonTitleDown, setIsRibbonTitleDown] = useState("");
   Modal.setAppElement("#root");
 
   useEffect(() => {
@@ -50,6 +54,11 @@ function App({ db, storage }) {
       changeloadingTextIndex();
     }
   }, [isAdding, isLoading, changeloadingTextIndex]);
+  useEffect(() => {
+    setTimeout(() => {
+      setIsRibbonTitleDown("startFadeOut");
+    }, 3500);
+  }, []);
 
   function changeloadingTextIndex() {
     setTimeout(() => {
@@ -94,6 +103,7 @@ function App({ db, storage }) {
           img.src = url;
           setcontent(
             <div
+              className="startFadeIn"
               style={{
                 width: "100%",
                 height: "100%",
@@ -101,26 +111,68 @@ function App({ db, storage }) {
                 flexDirection: "column",
                 justifyContent: "center",
                 alignItems: "center",
+                backgroundColor: "black",
               }}
             >
-              <p style={{ fontSize: 16, fontWeight: "bold" }}>
+              <p
+                style={{
+                  fontSize: 20,
+                  fontWeight: "bold",
+                  color: "white",
+                  padding: 10,
+                  margin: 10,
+                }}
+              >
                 {doc.data().uploader}
               </p>
               <img
                 style={{
-                  width: "65%",
-                  height: "65%",
-                  maxWidth: 700,
-                  maxHeight: 700,
+                  width: "90%",
+                  maxWidth: 500,
                   borderRadius: 10,
                   overflow: "hidden",
                 }}
                 src={img.src}
               />
-              <p style={{ fontSize: 20, fontWeight: "bold" }}>
+              <p
+                style={{
+                  fontSize: 24,
+                  fontWeight: "bold",
+                  color: "white",
+                  padding: 10,
+                  margin: 10,
+                }}
+              >
                 {doc.data().fortune}
               </p>
               <button
+                style={{
+                  background: "rgba(0,0,0,0)",
+                  borderRadius: 100,
+                  borderColor: "white",
+                  borderWidth: 2,
+                  boxShadow: "0px 10px 10px grey",
+                  padding: 5,
+                }}
+                className="mainButton"
+                onClick={() => window.location.reload()}
+              >
+                <img
+                  style={{ borderRadius: 100, transform: "scaleX(-1)" }}
+                  src="./images/pepe_return.png"
+                  width="80"
+                  height="80"
+                />
+              </button>
+              <button
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                  padding: 10,
+                  marginTop: 10,
+                  boxShadow: "0px 5px 5px grey",
+                }}
+                disabled={hideTodayButton}
                 onClick={() => {
                   window.location.reload();
                 }}
@@ -132,6 +184,10 @@ function App({ db, storage }) {
           setTimeout(() => {
             setIsLoading(false);
             setloadingTextListIndex(0);
+            setloadingModalClassName("startFadeOut");
+            setTimeout(() => {
+              setfadeOutSuccess(true);
+            }, 2000);
           }, 3000);
         }
       );
@@ -251,7 +307,9 @@ function App({ db, storage }) {
                   padding: 5,
                 }}
                 className="mainButton"
-                onClick={() => setisAdding(true)}
+                onClick={() => {
+                  //
+                }}
               >
                 <img
                   style={{ borderRadius: 100, transform: "scaleX(-1)" }}
@@ -286,9 +344,10 @@ function App({ db, storage }) {
             {content}
             <Modal
               isOpen={isLoading}
+              // className={loadingModalClassName}
               style={{
                 overlay: {
-                  animation: "fadeInAnimation ease 3s",
+                  animation: "fadeInAnimation ease 1s",
                   animationIterationCount: 1,
                   animationFillMode: "forwards",
 
@@ -308,16 +367,14 @@ function App({ db, storage }) {
                   justifyContent: "center",
                   alignItems: "center",
                   backgroundColor: "black",
-                  border: "1px solid white",
+                  border: "0px solid black",
                 },
               }}
             >
               <img
                 style={{
-                  width: "65%",
-                  height: "65%",
+                  width: "90%",
                   maxWidth: 700,
-                  maxHeight: 700,
                   borderRadius: 10,
                   overflow: "hidden",
                 }}
@@ -403,27 +460,31 @@ function App({ db, storage }) {
         )}
       </div>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <img width={400} src={"./images/ribbonTitle2.png"} />
-        <p
+      {!hideTodayButton && (
+        <div
+          className={isRibbonTitleDown}
           style={{
-            fontSize: 24,
-            color: "black",
-            fontWeight: "bold",
-            position: "relative",
-            bottom: "55%",
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
           }}
         >
-          페페의 다락방
-        </p>
-      </div>
+          <img width={400} src={"./images/ribbonTitle2.png"} />
+          <p
+            style={{
+              fontSize: 24,
+              color: "black",
+              fontWeight: "bold",
+              position: "relative",
+              bottom: "55%",
+            }}
+          >
+            페페의 다락방
+          </p>
+        </div>
+      )}
+
       <Modal
         isOpen={isAdding}
         onRequestClose={() => {
@@ -431,23 +492,29 @@ function App({ db, storage }) {
         }}
         style={{
           overlay: {
-            position: "fixed",
+            animation: "fadeInAnimation ease 2s",
+            animationIterationCount: 1,
+            animationFillMode: "forwards",
+
             width: "100%",
             maxWidth: 500,
+            height: "100%",
             transform: "translate(-50%)",
             left: "50%",
             right: 0,
             bottom: 0,
-            backgroundColor: "beige",
+            borderRadius: 15,
+            backgroundColor: "black",
           },
           content: {
-            borderRadius: 15,
-            marginTop: "20%",
-            height: "60%",
             display: "flex",
+            height: "80%",
             flexDirection: "column",
-            justifyContent: "space-between",
+            justifyContent: "center",
             alignItems: "center",
+            backgroundColor: "black",
+            border: "1px solid white",
+            borderRadius: 15,
           },
         }}
       >
@@ -465,7 +532,7 @@ function App({ db, storage }) {
               src={"./images/upload_pepe.gif"}
             />
 
-            <p style={{ fontSize: 30, fontWeight: "bold" }}>
+            <p style={{ fontSize: 30, fontWeight: "bold", color: "white" }}>
               {loadingTextListSecond[loadingIndexVertical].slice(
                 0,
                 loadingTextListIndex
@@ -474,6 +541,9 @@ function App({ db, storage }) {
           </div>
         ) : (
           <>
+            <p style={{ color: "white", fontWeight: "bold", fontSize: 20 }}>
+              새로운 페페 운세를 추가해주세요!
+            </p>
             <input
               style={{
                 width: "80%",
@@ -550,6 +620,31 @@ function App({ db, storage }) {
         isOpen={openCommentForm}
         onRequestClose={() => {
           setopenCommentForm(false);
+        }}
+        style={{
+          overlay: {
+            animation: "fadeInAnimation ease 2s",
+            animationIterationCount: 1,
+            animationFillMode: "forwards",
+
+            width: "100%",
+            maxWidth: 500,
+            height: "100%",
+            transform: "translate(-50%)",
+            left: "50%",
+            right: 0,
+            bottom: 0,
+            borderRadius: 15,
+            backgroundColor: "black",
+          },
+          content: {
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "black",
+            border: "0px solid black",
+          },
         }}
       >
         <input

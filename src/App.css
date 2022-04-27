@@ -47,17 +47,17 @@ body,
 }
 .uploadImage {
   flex: 1;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   width: 100%;
 }
 .mainButton {
   padding: 10px;
   border-radius: 5px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   margin: 10px;
 }
 .mainButton:hover {
-  background-color: red;
+  background-color: grey;
 }
 
 @keyframes fadeInAnimation {
@@ -75,4 +75,11 @@ body,
   100% {
     opacity: 0;
   }
+}
+
+.startFadeOut {
+  animation: fadeOutAnimation ease 2s forwards;
+}
+.startFadeIn {
+  animation: fadeInAnimation ease 2s forwards;
 }
