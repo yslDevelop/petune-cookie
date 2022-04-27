@@ -13,77 +13,128 @@ import {
   orderBy,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { Player } from "video-react";
 import "react-dropzone-uploader/dist/styles.css";
+import TodayFortune from "./components/TodayFortune";
+import store from "./redux/store";
+import { useSelector } from "react-redux";
 
 function App({ db, storage }) {
-  const [comment, setComment] = useState("");
-  const [openCommentForm, setopenCommentForm] = useState(false);
-  const [hideTodayButton, sethideTodayButton] = useState(false);
-  const [isAdding, setisAdding] = useState(false);
-  const [uploader, setuploader] = useState("");
-  const [files, setFiles] = useState([]);
-  const [fortune, setfortune] = useState("");
-  const [content, setcontent] = useState(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [fadeOutSuccess, setfadeOutSuccess] = useState(false);
-  const [loadingModalClassName, setloadingModalClassName] = useState("");
-  const [loadingIndexVertical, setloadingIndexVertical] = useState(0);
-  const [loadingTextListIndex, setloadingTextListIndex] = useState(1);
-  const [loadingTextList, setloadingTextList] = useState([
-    `두구두구두구두구`,
-    `언제까지 어깨 춤을 추게 할거야~
-내 어깨를 봐~ 아 탈골 됐잖아~
-아 탈골 탈골 탈골탈골타골~`,
-  ]);
-  const [loadingTextListSecond, setloadingTextListSecond] = useState([
-    `업로드 중....💚.....💚.....
-조금만 기다려줘잉💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚`,
-    `언제까지 어깨 춤을 추게 할거야~
-내 어깨를 봐~ 아 탈골 됐잖아~
-아 탈골 탈골 탈골탈골타골~`,
-  ]);
-  const [isRibbonTitleDown, setIsRibbonTitleDown] = useState("");
+  const {
+    comment,
+    openCommentForm,
+    hideTodayButton,
+    isAdding,
+    uploader,
+    files,
+    fortune,
+    content,
+    isRibbonTitleDown,
+    isLoading,
+    loadingIndexVertical,
+    loadingTextListIndex,
+    loadingTextList,
+    loadingTextListSecond,
+  } = useSelector((state) => ({
+    comment: state.GlobalStates.comment,
+    openCommentForm: state.GlobalStates.openCommentForm,
+    hideTodayButton: state.GlobalStates.hideTodayButton,
+    isAdding: state.GlobalStates.isAdding,
+    uploader: state.GlobalStates.uploader,
+    files: state.GlobalStates.files,
+    fortune: state.GlobalStates.fortune,
+    content: state.GlobalStates.content,
+    isRibbonTitleDown: state.GlobalStates.isRibbonTitleDown,
+    isLoading: state.GlobalStates.isLoading,
+    loadingIndexVertical: state.GlobalStates.loadingIndexVertical,
+    loadingTextListIndex: state.GlobalStates.loadingTextListIndex,
+    loadingTextList: state.GlobalStates.loadingTextList,
+    loadingTextListSecond: state.GlobalStates.loadingTextListSecond,
+  }));
+
+  //   const [comment, setComment] = useState("");
+  //   const [openCommentForm, setopenCommentForm] = useState(false);
+  //   const [hideTodayButton, sethideTodayButton] = useState(false);
+  //   const [isAdding, setisAdding] = useState(false);
+  //   const [uploader, setuploader] = useState("");
+  //   const [files, setFiles] = useState([]);
+  //   const [fortune, setfortune] = useState("");
+  //   const [content, setcontent] = useState(null);
+  //   const [isRibbonTitleDown, setIsRibbonTitleDown] = useState("");
+
+  //   const [isLoading, setIsLoading] = useState(false);
+  //   const [loadingIndexVertical, setLoadingIndexVertical] = useState(0);
+  //   const [loadingTextListIndex, setLoadingTextListIndex] = useState(1);
+  //   const [loadingTextList, setloadingTextList] = useState([
+  //     `두구두구두구두구`,
+  //     `언제까지 어깨 춤을 추게 할거야~
+  // 내 어깨를 봐~ 아 탈골 됐잖아~
+  // 아 탈골 탈골 탈골탈골타골~`,
+  //   ]);
+  //   const [loadingTextListSecond, setloadingTextListSecond] = useState([
+  //     `업로드 중....💚.....💚.....
+  // 조금만 기다려줘잉💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚`,
+  //     `언제까지 어깨 춤을 추게 할거야~
+  // 내 어깨를 봐~ 아 탈골 됐잖아~
+  // 아 탈골 탈골 탈골탈골타골~`,
+  //   ]);
+
   Modal.setAppElement("#root");
 
   useEffect(() => {
-    if (isLoading || isAdding) {
+    if (isLoading) {
       setTimeout(() => {
-        setloadingIndexVertical(1);
+        store.dispatch({ type: "setLoadingIndexVertical", payload: 1 });
       }, 3000);
       changeloadingTextIndex();
     }
   }, [isAdding, isLoading, changeloadingTextIndex]);
   useEffect(() => {
     setTimeout(() => {
-      setIsRibbonTitleDown("startFadeOut");
+      store.dispatch({ type: "setIsRibbonTitleDown", payload: "startFadeOut" });
     }, 3500);
   }, []);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   function changeloadingTextIndex() {
     setTimeout(() => {
       if (
         isLoading &&
         loadingTextListIndex < loadingTextList[loadingIndexVertical].length - 1
       ) {
-        setloadingTextListIndex(loadingTextListIndex + 1);
+        store.dispatch({
+          type: "setLoadingTextListIndex",
+          payload: loadingTextListIndex + 1,
+        });
       } else if (
         isAdding &&
         loadingTextListIndex <
           loadingTextListSecond[loadingIndexVertical].length - 1
       ) {
-        setloadingTextListIndex(loadingTextListIndex + 1);
+        store.dispatch({
+          type: "setLoadingTextListIndex",
+          payload: loadingTextListIndex + 1,
+        });
       } else {
-        setloadingTextListIndex(1);
+        store.dispatch({
+          type: "setLoadingTextListIndex",
+          payload: 1,
+        });
       }
     }, 70);
   }
 
   async function loadRandomFortune() {
-    sethideTodayButton(true);
-    setIsLoading(true);
+    store.dispatch({
+      type: "setHideTodayButton",
+      payload: true,
+    });
+    store.dispatch({
+      type: "setIsLoading",
+      payload: true,
+    });
+
     setTimeout(() => {
-      setloadingIndexVertical(1);
+      store.dispatch({ type: "setLoadingIndexVertical", payload: 1 });
     }, 3000);
     let rand = Math.random();
     let fortuneRef = collection(db, "Fortunes");
@@ -94,107 +145,48 @@ function App({ db, storage }) {
       limit(1)
     );
     let querySnapshot = await getDocs(q);
-
     querySnapshot.forEach((doc) => {
-      console.log(doc.data());
-      getDownloadURL(ref(storage, `images/${doc.data().fileName}`)).then(
-        (url) => {
-          let img = new Image();
-          img.src = url;
-          setcontent(
-            <div
-              className="startFadeIn"
-              style={{
-                width: "100%",
-                height: "100%",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "black",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: 20,
-                  fontWeight: "bold",
-                  color: "white",
-                  padding: 10,
-                  margin: 10,
-                }}
-              >
-                {doc.data().uploader}
-              </p>
-              <img
-                style={{
-                  width: "90%",
-                  maxWidth: 500,
-                  borderRadius: 10,
-                  overflow: "hidden",
-                }}
-                src={img.src}
-              />
-              <p
-                style={{
-                  fontSize: 24,
-                  fontWeight: "bold",
-                  color: "white",
-                  padding: 10,
-                  margin: 10,
-                }}
-              >
-                {doc.data().fortune}
-              </p>
-              <button
-                style={{
-                  background: "rgba(0,0,0,0)",
-                  borderRadius: 100,
-                  borderColor: "white",
-                  borderWidth: 2,
-                  boxShadow: "0px 10px 10px grey",
-                  padding: 5,
-                }}
-                className="mainButton"
-                onClick={() => window.location.reload()}
-              >
-                <img
-                  style={{ borderRadius: 100, transform: "scaleX(-1)" }}
-                  src="./images/pepe_return.png"
-                  width="80"
-                  height="80"
-                />
-              </button>
-              <button
-                style={{
-                  backgroundColor: "white",
-                  borderRadius: 5,
-                  padding: 10,
-                  marginTop: 10,
-                  boxShadow: "0px 5px 5px grey",
-                }}
-                disabled={hideTodayButton}
-                onClick={() => {
-                  window.location.reload();
-                }}
-              >
-                돌아가기
-              </button>
-            </div>
-          );
-          setTimeout(() => {
-            setIsLoading(false);
-            setloadingTextListIndex(0);
-            setloadingModalClassName("startFadeOut");
-            setTimeout(() => {
-              setfadeOutSuccess(true);
-            }, 2000);
-          }, 3000);
-        }
-      );
+      store.dispatch({
+        type: "setContent",
+        payload: <TodayFortune doc={doc} url={doc.data().url} />,
+      });
+
+      setTimeout(() => {
+        store.dispatch({
+          type: "setIsLoading",
+          payload: false,
+        });
+        store.dispatch({
+          type: "setLoadingTextListIndex",
+          payload: 0,
+        });
+      }, 2000);
+      //   getDownloadURL(ref(storage, `images/${doc.data().fileName}`)).then(
+      //     (url) => {
+      //       console.log(url);
+      //       let img = new Image();
+      //       img.src = url;
+      //       store.dispatch({
+      //         type: "setContent",
+      //         payload: <TodayFortune doc={doc} img={img} />,
+      //       });
+
+      //       setTimeout(() => {
+      //         store.dispatch({
+      //           type: "setIsLoading",
+      //           payload: false,
+      //         });
+      //         store.dispatch({
+      //           type: "setLoadingTextListIndex",
+      //           payload: 0,
+      //         });
+      //       }, 1000);
+      //     }
+      //   );
     });
   }
 
-  async function addFortune(fileName) {
+  async function addFortune(fileName, url) {
     try {
       const docRef = await addDoc(collection(db, "Fortunes"), {
         // file: files[0],
@@ -202,10 +194,20 @@ function App({ db, storage }) {
         randomId: Math.random(),
         fileName: fileName,
         uploader: uploader,
+        url: url,
       });
-      setisAdding(false);
-      setIsLoading(false);
-      setloadingTextListIndex(0);
+      store.dispatch({
+        type: "setIsAdding",
+        payload: false,
+      });
+      store.dispatch({
+        type: "setIsLoading",
+        payload: false,
+      });
+      store.dispatch({
+        type: "setLoadingTextListIndex",
+        payload: 0,
+      });
       console.log("Document written with ID: ", docRef.id);
     } catch (e) {
       console.error("Error adding document: ", e);
@@ -213,13 +215,20 @@ function App({ db, storage }) {
   }
 
   async function uploadImage(image) {
-    setIsLoading(true);
+    store.dispatch({
+      type: "setIsLoading",
+      payload: true,
+    });
     const storageRef = ref(storage, `/images/${image.name}${Math.random()}`);
 
     uploadBytes(storageRef, image)
       .then((snapshot) => {
         console.log("Uploaded a blob or file!");
-        addFortune(snapshot.metadata.name);
+        console.log(snapshot);
+        getDownloadURL(snapshot.ref).then((url) => {
+          console.log(url);
+          addFortune(snapshot.metadata.name, url);
+        });
       })
       .catch((e) => console.log(e));
   }
@@ -230,7 +239,7 @@ function App({ db, storage }) {
   const handleChangeStatus = ({ meta, file }, status) => {
     if (status === "done") {
       console.log("?");
-      setFiles([file]);
+      store.dispatch({ type: "setFiles", payload: [file] });
     }
     console.log(status, meta, file);
   };
@@ -265,13 +274,17 @@ function App({ db, storage }) {
                 style={{
                   background: "rgba(0,0,0,0)",
                   borderRadius: 100,
-                  borderColor: "white",
-                  borderWidth: 2,
+                  border: "2px solid white",
                   boxShadow: "0px 10px 10px grey",
                   padding: 5,
                 }}
                 className="mainButton"
-                onClick={() => setisAdding(true)}
+                onClick={() =>
+                  store.dispatch({
+                    type: "setIsAdding",
+                    payload: true,
+                  })
+                }
               >
                 <img
                   style={{ borderRadius: 100 }}
@@ -286,11 +299,15 @@ function App({ db, storage }) {
                   borderRadius: 5,
                   padding: 5,
                   margin: 0,
-                  boxShadow: "0px 5px 5px black",
+                  boxShadow: "0px 5px 5px grey",
+                  border: "2px solid white",
                 }}
                 disabled={hideTodayButton}
                 onClick={() => {
-                  setisAdding(true);
+                  store.dispatch({
+                    type: "setIsAdding",
+                    payload: true,
+                  });
                 }}
               >
                 페페 추가
@@ -301,8 +318,8 @@ function App({ db, storage }) {
                 style={{
                   background: "rgba(0,0,0,0)",
                   borderRadius: 100,
-                  borderColor: "white",
-                  borderWidth: 2,
+                  border: "2px solid white",
+
                   boxShadow: "0px 10px 10px grey",
                   padding: 5,
                 }}
@@ -324,7 +341,9 @@ function App({ db, storage }) {
                   borderRadius: 5,
                   padding: 5,
                   margin: 0,
-                  boxShadow: "0px 5px 5px black",
+                  border: "2px solid white",
+
+                  boxShadow: "0px 5px 5px grey",
                 }}
                 disabled={hideTodayButton}
                 onClick={() => {
@@ -344,7 +363,6 @@ function App({ db, storage }) {
             {content}
             <Modal
               isOpen={isLoading}
-              // className={loadingModalClassName}
               style={{
                 overlay: {
                   animation: "fadeInAnimation ease 1s",
@@ -395,8 +413,8 @@ function App({ db, storage }) {
               style={{
                 borderRadius: 100,
                 background: "rgba(0,0,0,0)",
-                borderColor: "white",
-                borderWidth: 2,
+                border: "2px solid white",
+
                 boxShadow: "0px 10px 10px black",
                 padding: 5,
               }}
@@ -419,6 +437,7 @@ function App({ db, storage }) {
                 padding: 5,
                 margin: 0,
                 boxShadow: "0px 5px 5px black",
+                border: "2px solid white",
               }}
               disabled={hideTodayButton}
               onClick={() => {
@@ -441,7 +460,7 @@ function App({ db, storage }) {
                 className="mainButton"
                 disabled={hideTodayButton}
                 onClick={() => {
-                  setopenCommentForm(true);
+                  store.dispatch({ type: "setOpenCommentForm", payload: true });
                 }}
               >
                 방명록 쓰기
@@ -450,7 +469,7 @@ function App({ db, storage }) {
                 className="mainButton"
                 disabled={hideTodayButton}
                 onClick={() => {
-                  setopenCommentForm(true);
+                  store.dispatch({ type: "setOpenCommentForm", payload: true });
                 }}
               >
                 방명록 보기
@@ -488,7 +507,10 @@ function App({ db, storage }) {
       <Modal
         isOpen={isAdding}
         onRequestClose={() => {
-          setisAdding(false);
+          store.dispatch({
+            type: "setIsAdding",
+            payload: false,
+          });
         }}
         style={{
           overlay: {
@@ -556,7 +578,9 @@ function App({ db, storage }) {
               type="text"
               placeholder="작성자 이름"
               value={uploader}
-              onChange={(e) => setuploader(e.target.value)}
+              onChange={(e) =>
+                store.dispatch({ type: "setUploader", payload: e.target.value })
+              }
             />
             <Dropzone
               getUploadParams={getUploadParams}
@@ -587,7 +611,10 @@ function App({ db, storage }) {
                 cols="40"
                 rows="5"
                 onChange={(e) => {
-                  setfortune(e.target.value);
+                  store.dispatch({
+                    type: "setFortune",
+                    payload: e.target.value,
+                  });
                 }}
                 value={fortune}
               />
@@ -596,7 +623,10 @@ function App({ db, storage }) {
                   className="mainButton"
                   onClick={() => {
                     uploadImage(files[0]);
-                    setfortune("");
+                    store.dispatch({
+                      type: "setFortune",
+                      payload: "",
+                    });
                   }}
                 >
                   저장
@@ -604,8 +634,14 @@ function App({ db, storage }) {
                 <button
                   className="mainButton"
                   onClick={() => {
-                    setisAdding(false);
-                    setfortune("");
+                    store.dispatch({
+                      type: "setIsAdding",
+                      payload: false,
+                    });
+                    store.dispatch({
+                      type: "setFortune",
+                      payload: "",
+                    });
                   }}
                 >
                   닫기
@@ -619,7 +655,7 @@ function App({ db, storage }) {
       <Modal
         isOpen={openCommentForm}
         onRequestClose={() => {
-          setopenCommentForm(false);
+          store.dispatch({ type: "setOpenCommentForm", payload: false });
         }}
         style={{
           overlay: {
@@ -663,7 +699,9 @@ function App({ db, storage }) {
           type="text"
           placeholder="작성자 이름"
           value={uploader}
-          onChange={(e) => setuploader(e.target.value)}
+          onChange={(e) => {
+            store.dispatch({ type: "setUploader", payload: e.target.value });
+          }}
         />
         <textarea
           style={{
@@ -676,12 +714,24 @@ function App({ db, storage }) {
           cols="40"
           rows="5"
           onChange={(e) => {
-            setComment(e.target.value);
+            store.dispatch({ type: "setComment", payload: e.target.value });
           }}
           value={comment}
         />
-        <button onClick={() => setopenCommentForm(false)}>저장</button>
-        <button onClick={() => setopenCommentForm(false)}>닫기</button>
+        <button
+          onClick={() =>
+            store.dispatch({ type: "setOpenCommentForm", payload: false })
+          }
+        >
+          저장
+        </button>
+        <button
+          onClick={() =>
+            store.dispatch({ type: "setOpenCommentForm", payload: false })
+          }
+        >
+          닫기
+        </button>
       </Modal>
     </div>
   );

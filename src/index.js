@@ -9,11 +9,9 @@ import { getAnalytics } from "firebase/analytics";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+import { Provider } from "react-redux";
+import Store from "./redux/store";
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyAtEkILsi7zHyMGbZpTQhFDmBUysQf7v6A",
   authDomain: "petune-cookie.firebaseapp.com",
@@ -33,7 +31,9 @@ const storage = getStorage(app);
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <App db={db} storage={storage} />
+    <Provider store={Store}>
+      <App db={db} storage={storage} />
+    </Provider>
   </React.StrictMode>
 );
 
