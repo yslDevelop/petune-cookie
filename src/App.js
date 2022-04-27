@@ -178,41 +178,7 @@ function App({ db, storage }) {
     }
     console.log(status, meta, file);
   };
-  const getFilesFromEvent = (e) => {
-    return new Promise((resolve) => {
-      getDroppedOrSelectedFiles(e).then((chosenFiles) => {
-        resolve(chosenFiles.map((f) => f.fileObject));
-      });
-    });
-  };
-  const selectFileInput = ({ accept, onFiles, files, getFilesFromEvent }) => {
-    return (
-      <button
-        style={{ width: "100%", height: "100%" }}
-        onClick={() => {
-          document.getElementById("inputFile").click();
-          console.log("2125641513");
-        }}
-        className="uploadButton"
-      >
-        페페 고르기
-        <input
-          id="inputFile"
-          style={{ display: "none" }}
-          type="file"
-          accept={accept}
-          multiple
-          onChange={(e) => {
-            getFilesFromEvent(e).then((chosenFiles) => {
-              onFiles(chosenFiles);
-              setFiles(chosenFiles);
-              console.log(files);
-            });
-          }}
-        />
-      </button>
-    );
-  };
+
   const previewImg = (props) => {
     return (
       <img
@@ -227,17 +193,93 @@ function App({ db, storage }) {
   };
 
   return (
-    <div className="App">
+    <div
+      style={{
+        animation: "fadeInAnimation ease 3s",
+        animationIterationCount: 1,
+        animationFillMode: "forwards",
+      }}
+      className="App"
+    >
       <div className="TopNav">
         {!hideTodayButton && (
           <>
-            <button className="mainButton" onClick={() => setisAdding(true)}>
-              페페 추가하기
-            </button>
-            <button className="mainButton">페페 모음</button>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <button
+                style={{
+                  background: "rgba(0,0,0,0)",
+                  borderRadius: 100,
+                  borderColor: "white",
+                  borderWidth: 2,
+                  boxShadow: "0px 10px 10px grey",
+                  padding: 5,
+                }}
+                className="mainButton"
+                onClick={() => setisAdding(true)}
+              >
+                <img
+                  style={{ borderRadius: 100 }}
+                  src="./images/pepe_add.png"
+                  width="80"
+                  height="80"
+                />
+              </button>
+              <button
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                  padding: 5,
+                  margin: 0,
+                  boxShadow: "0px 5px 5px black",
+                }}
+                disabled={hideTodayButton}
+                onClick={() => {
+                  setisAdding(true);
+                }}
+              >
+                페페 추가
+              </button>
+            </div>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <button
+                style={{
+                  background: "rgba(0,0,0,0)",
+                  borderRadius: 100,
+                  borderColor: "white",
+                  borderWidth: 2,
+                  boxShadow: "0px 10px 10px grey",
+                  padding: 5,
+                }}
+                className="mainButton"
+                onClick={() => setisAdding(true)}
+              >
+                <img
+                  style={{ borderRadius: 100, transform: "scaleX(-1)" }}
+                  src="./images/pepe_library.gif"
+                  width="80"
+                  height="80"
+                />
+              </button>
+              <button
+                style={{
+                  backgroundColor: "white",
+                  borderRadius: 5,
+                  padding: 5,
+                  margin: 0,
+                  boxShadow: "0px 5px 5px black",
+                }}
+                disabled={hideTodayButton}
+                onClick={() => {
+                  // setisAdding(true);
+                }}
+              >
+                페페 모음
+              </button>
+            </div>
           </>
         )}
       </div>
+
       <div className="MainContent">
         {hideTodayButton ? (
           <>
@@ -246,35 +288,30 @@ function App({ db, storage }) {
               isOpen={isLoading}
               style={{
                 overlay: {
+                  animation: "fadeInAnimation ease 3s",
+                  animationIterationCount: 1,
+                  animationFillMode: "forwards",
+
                   width: "100%",
                   maxWidth: 500,
-                  maxHeight: 1000,
+                  height: "100%",
                   transform: "translate(-50%)",
                   left: "50%",
                   right: 0,
                   bottom: 0,
                   borderRadius: 15,
-                  backgroundColor: "beige",
+                  backgroundColor: "black",
                 },
                 content: {
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "center",
                   alignItems: "center",
-                  backgroundColor: "beige",
-                  borderWidth: 0,
+                  backgroundColor: "black",
+                  border: "1px solid white",
                 },
               }}
             >
-              {/* <video
-                style={{ borderRadius: 15 }}
-                width={"100%"}
-                height={"100%"}
-                controls
-                autoPlay={true}
-              >
-                <source src="loading.mp4" type="video/mp4" />
-              </video> */}
               <img
                 style={{
                   width: "65%",
@@ -286,7 +323,7 @@ function App({ db, storage }) {
                 }}
                 src={"./images/pepe_loading.gif"}
               />
-              <p style={{ fontSize: 30, fontWeight: "bold" }}>
+              <p style={{ fontSize: 30, fontWeight: "bold", color: "white" }}>
                 {loadingTextList[loadingIndexVertical].slice(
                   0,
                   loadingTextListIndex
@@ -298,6 +335,34 @@ function App({ db, storage }) {
           <>
             <button
               className="mainButton"
+              style={{
+                borderRadius: 100,
+                background: "rgba(0,0,0,0)",
+                borderColor: "white",
+                borderWidth: 2,
+                boxShadow: "0px 10px 10px black",
+                padding: 5,
+              }}
+              disabled={hideTodayButton}
+              onClick={() => {
+                loadRandomFortune();
+              }}
+            >
+              <img
+                style={{ borderRadius: 100 }}
+                src="./images/todayFortune.png"
+                width="60"
+                height="60"
+              />
+            </button>
+            <button
+              style={{
+                backgroundColor: "white",
+                borderRadius: 5,
+                padding: 5,
+                margin: 0,
+                boxShadow: "0px 5px 5px black",
+              }}
               disabled={hideTodayButton}
               onClick={() => {
                 loadRandomFortune();
@@ -305,6 +370,7 @@ function App({ db, storage }) {
             >
               오늘의 페페는?
             </button>
+
             <div
               style={{
                 display: "flex",
@@ -336,6 +402,28 @@ function App({ db, storage }) {
           </>
         )}
       </div>
+
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <img width={400} src={"./images/ribbonTitle2.png"} />
+        <p
+          style={{
+            fontSize: 24,
+            color: "black",
+            fontWeight: "bold",
+            position: "relative",
+            bottom: "55%",
+          }}
+        >
+          페페의 다락방
+        </p>
+      </div>
       <Modal
         isOpen={isAdding}
         onRequestClose={() => {
@@ -346,17 +434,16 @@ function App({ db, storage }) {
             position: "fixed",
             width: "100%",
             maxWidth: 500,
-            maxHeight: 1000,
             transform: "translate(-50%)",
             left: "50%",
-
             right: 0,
             bottom: 0,
-            // backgroundColor: "beige",
+            backgroundColor: "beige",
           },
           content: {
             borderRadius: 15,
-
+            marginTop: "20%",
+            height: "60%",
             display: "flex",
             flexDirection: "column",
             justifyContent: "space-between",
@@ -469,7 +556,8 @@ function App({ db, storage }) {
           style={{
             width: "100%",
             maxWidth: 500,
-            transform: "translate(-50%)",
+            transform: "translate(-50%, -50%)",
+            top: "50%",
             left: "50%",
             padding: 10,
             resize: "none",

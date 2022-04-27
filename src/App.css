@@ -12,16 +12,18 @@ body,
 .App {
   height: 100%;
   width: 100%;
+  max-width: 400px;
+
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  max-width: 700px;
-  max-height: 1000px;
-  /* background-image: url("../public/images/background.jpg"); */
-  /* background-size: 100%, auto; */
-  /* background-repeat: no-repeat; */
-  background-color: beige;
+
+  background-image: url("../public/images/background.jpeg");
+  background-size: 100%, auto;
+  background-repeat: no-repeat;
+  background-color: black;
+  background-position: center;
 }
 .TopNav {
   padding: 10px;
@@ -56,4 +58,21 @@ body,
 }
 .mainButton:hover {
   background-color: red;
+}
+
+@keyframes fadeInAnimation {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+@keyframes fadeOutAnimation {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
