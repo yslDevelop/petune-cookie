@@ -7,7 +7,7 @@ const initalState = {
   files: [],
   fortune: "",
   content: null,
-  isRibbonTitleDown: "",
+  isRibbonTitleDown: "showRibbon",
   isLoading: false,
   loadingIndexVertical: 0,
   loadingTextListIndex: 1,
@@ -23,6 +23,16 @@ const initalState = {
     `언제까지 어깨 춤을 추게 할거야~
 내 어깨를 봐~ 아 탈골 됐잖아~
 아 탈골 탈골 탈골탈골타골~`,
+  ],
+  server: "Fortunes",
+  loadingTextListEnglish: [
+    `Hold on.. Pepe is asking to the wandering souls about your day................`,
+    `Good things always take time....such as smores........SMORE BABY!!!!!!!!!!!!!!!`,
+  ],
+  loadingTextListEnglishSecond: [
+    `Uploading....💚.....💚.....
+Need little bit more time Thank you  💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚💚`,
+    `Thank you for patience and your contribution! you will be rewarded by someone somehow someday. I PROMISE`,
   ],
 };
 
@@ -83,10 +93,20 @@ export default function GlobalStates(state = initalState, action) {
         ...state,
         loadingIndexVertical: action.payload,
       };
+    case "increaseLoadingTextListIndex":
+      return {
+        ...state,
+        loadingTextListIndex: state.loadingTextListIndex + 1,
+      };
     case "setLoadingTextListIndex":
       return {
         ...state,
         loadingTextListIndex: action.payload,
+      };
+    case "setServer":
+      return {
+        ...state,
+        server: action.payload,
       };
 
     default:

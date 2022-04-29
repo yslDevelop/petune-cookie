@@ -72,6 +72,22 @@ export default function TodayFortune({ doc, url }) {
           height="80"
         />
       </button> */}
+      {/* <button
+        style={{
+          backgroundColor: "white",
+          border: "2px solid white",
+
+          borderRadius: 5,
+          padding: 10,
+          marginTop: 10,
+          boxShadow: "0px 5px 5px grey",
+        }}
+        onClick={() => {
+          window.location.reload();
+        }}
+      >
+        친구한테 이 운세 보내기
+      </button> */}
       <button
         style={{
           backgroundColor: "white",
@@ -86,7 +102,7 @@ export default function TodayFortune({ doc, url }) {
           window.location.reload();
         }}
       >
-        돌아가기
+        {navigator.language === "ko-KR" ? "돌아가기" : "Return"}
       </button>
     </div>
   );
